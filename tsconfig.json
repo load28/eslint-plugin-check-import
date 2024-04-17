@@ -15,6 +15,15 @@
     "declaration": false,
     "experimentalDecorators": true,
     "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@project/*": [
+        "projects/project/*"
+      ],
+      "@app/*": [
+        "src/app/*"
+      ]
+    },
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
