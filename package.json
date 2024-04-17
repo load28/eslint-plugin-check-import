@@ -63,6 +63,7 @@
   },
   "ic": {
     "default": "allow",
+    "ignore": ["*.spec.ts"],
     "element": [
       {
         "type": "project",
@@ -84,7 +85,8 @@
       {
         "from": "project",
         "allow": [
-          "project", "app"
+          "project",
+          "app"
         ]
       }
     ]

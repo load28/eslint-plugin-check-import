@@ -11,7 +11,10 @@ module.exports = {
         const filePath = context.getFilename();
         const tsConfigPath = path.join(process.cwd(), "tsconfig.json");
         const tsConfigData = fs.readFileSync(tsConfigPath, "utf8");
-        const tsConfig = ts.parseConfigFileTextToJson(tsConfigPath, tsConfigData).config;
+        const tsConfig = ts.parseConfigFileTextToJson(
+          tsConfigPath,
+          tsConfigData,
+        ).config;
         const { baseUrl, paths } = tsConfig.compilerOptions;
 
         const packageJsonPath = path.join(process.cwd(), "package.json");
@@ -22,15 +25,20 @@ module.exports = {
         const defaultValue = ic.default;
         const element = ic.element;
         const rules = ic.rules;
+        const ignorePatterns = ic.ignore || [];
 
         const matchPath = tsconfigPaths.createMatchPath(baseUrl, paths);
         const checkTsPath = (importPath) => {
-          return Object.keys(paths).some((tsAlias) => minimatch(importPath, tsAlias));
+          return Object.keys(paths).some((tsAlias) =>
+            minimatch(importPath, tsAlias),
+          );
         };
 
         const getAbsolutePath = (importPath) => {
           if (checkTsPath(importPath)) {
-            const resolvedPath = matchPath(importPath, undefined, undefined, [".ts"]);
+            const resolvedPath = matchPath(importPath, undefined, undefined, [
+              ".ts",
+            ]);
             return path.resolve(baseUrl, resolvedPath);
           } else {
             const currentFilePath = context.getFilename();
@@ -41,18 +49,38 @@ module.exports = {
 
         return {
           ImportDeclaration: function (node) {
+            const isIgnore = ignorePatterns.some((pattern) => {
+              return minimatch(
+                filePath,
+                path.join(process.cwd(), "**/" + pattern),
+              );
+            });
+
+            if (isIgnore) {
+              console.log(filePath, "is ignored");
+              return;
+            }
+
             const importPath = node.source.value;
-            const isDependency = Object.keys(dependencies).some((key) => importPath.startsWith(key));
-            const isDevDependency = Object.keys(devDependencies).some((key) => importPath.startsWith(key));
+            const isDependency = Object.keys(dependencies).some((key) =>
+              importPath.startsWith(key),
+            );
+            const isDevDependency = Object.keys(devDependencies).some((key) =>
+              importPath.startsWith(key),
+            );
 
             if (isDependency || isDevDependency) {
               return;
             }
 
             const absolutePath = getAbsolutePath(importPath);
-            const elementType = element.find((el) => minimatch(filePath, path.join(process.cwd(), el.pattern)));
+            const elementType = element.find((el) =>
+              minimatch(filePath, path.join(process.cwd(), el.pattern)),
+            );
 
-            const elementRules = rules.filter((rule) => rule.from === elementType.type);
+            const elementRules = rules.filter(
+              (rule) => rule.from === elementType.type,
+            );
 
             if (elementRules.length === 0) {
               if (defaultValue === "allow") {
