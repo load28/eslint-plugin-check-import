@@ -4,14 +4,9 @@ const path = require("path");
 const tsconfigPaths = require("tsconfig-paths");
 const { minimatch } = require("minimatch");
 
-const plugin = {
-  meta: {
-    name: "eslint-plugin-ic",
-    version: "0.0.1",
-  },
-  version: "0.0.1",
+module.exports = {
   rules: {
-    "check-dependencies": {
+    "check-import": {
       meta: {
         type: "problem",
         schema: [],
@@ -23,19 +18,19 @@ const plugin = {
         const tsConfigData = fs.readFileSync(tsConfigPath, "utf8");
         const tsConfig = ts.parseConfigFileTextToJson(
           tsConfigPath,
-          tsConfigData,
+          tsConfigData
         ).config;
         const { baseUrl, paths } = tsConfig.compilerOptions;
 
         const packageJsonPath = path.join(root, "package.json");
         const packageJsonData = fs.readFileSync(packageJsonPath, "utf8");
         const packageJson = JSON.parse(packageJsonData);
-        const { dependencies, devDependencies, ic } = packageJson;
+        const { dependencies, devDependencies, checkImport } = packageJson;
 
-        const defaultValue = ic.default;
-        const element = ic.element;
-        const rules = ic.rules;
-        const ignorePatterns = ic.ignore || [];
+        const defaultValue = checkImport.default;
+        const element = checkImport.element;
+        const rules = checkImport.rules;
+        const ignorePatterns = checkImport.ignore || [];
 
         const matchPath = tsconfigPaths.createMatchPath(baseUrl, paths);
         const checkTsPath = (importPath) => {
@@ -72,10 +67,10 @@ const plugin = {
 
             const importPath = node.source.value;
             const isDependency = Object.keys(dependencies).some((key) =>
-              importPath.startsWith(key),
+              importPath.startsWith(key)
             );
             const isDevDependency = Object.keys(devDependencies).some((key) =>
-              importPath.startsWith(key),
+              importPath.startsWith(key)
             );
 
             if (isDependency || isDevDependency) {
@@ -83,16 +78,12 @@ const plugin = {
             }
 
             const absolutePath = getAbsolutePath(importPath);
-            // console.log("------------------------------------");
-            // console.log("importPath", importPath);
-            // console.log("absolutePath", absolutePath);
-            // console.log("------------------------------------");
             const elementType = element.find((el) =>
-              minimatch(filePath, path.join(root, el.pattern)),
+              minimatch(filePath, path.join(root, el.pattern))
             );
 
             const elementRules = rules.filter(
-              (rule) => rule.from === elementType.type,
+              (rule) => rule.from === elementType.type
             );
 
             if (elementRules.length === 0) {
@@ -129,16 +120,23 @@ const plugin = {
               return minimatch(absolutePath, path.join(root, pattern));
             });
 
-            if (isDisallow) {
+            if (disallowedRules.length && isDisallow) {
               context.report({
                 node,
                 message: `Importing from this path is not allowed: ${importPath}`,
               });
-            } else if (!isAllow) {
+            } else if (allowedRules.length && !isAllow) {
               context.report({
                 node,
                 message: `Importing from this path is not allowed: ${importPath}`,
               });
+            } else {
+              if (defaultValue === "disallow") {
+                context.report({
+                  node,
+                  message: `Importing from this path is not allowed: ${importPath}`,
+                });
+              }
             }
           },
         };
@@ -146,6 +144,3 @@ const plugin = {
     },
   },
 };
-
-export default plugin;
-module.exports = plugin;
