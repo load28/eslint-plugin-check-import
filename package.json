@@ -1,94 +1,25 @@
 {
-  "name": "ng17",
-  "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "lint": "ng lint"
-  },
-  "private": true,
-  "dependencies": {
-    "@angular-eslint/eslint-plugin": "^17.2.0",
-    "@angular-eslint/eslint-plugin-template": "^17.2.0",
-    "@angular-eslint/template-parser": "^17.2.0",
-    "@angular/animations": "^17.0.0",
-    "@angular/common": "^17.0.0",
-    "@angular/compiler": "^17.0.0",
-    "@angular/core": "^17.0.0",
-    "@angular/forms": "^17.0.0",
-    "@angular/platform-browser": "^17.0.0",
-    "@angular/platform-browser-dynamic": "^17.0.0",
-    "@angular/router": "^17.0.0",
-    "msw": "^2.1.0",
-    "rxjs": "~7.8.0",
-    "ts-node": "^10.9.2",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.14.2"
-  },
-  "devDependencies": {
-    "@angular-devkit/build-angular": "^17.0.10",
-    "@angular-eslint/builder": "^17.2.0",
-    "@angular-eslint/eslint-plugin": "17.2.0",
-    "@angular-eslint/eslint-plugin-template": "17.2.0",
-    "@angular-eslint/schematics": "17.2.0",
-    "@angular-eslint/template-parser": "17.2.0",
-    "@angular/cli": "^17.0.10",
-    "@angular/compiler-cli": "^17.0.0",
-    "@types/jasmine": "~5.1.0",
-    "@typescript-eslint/eslint-plugin": "^6.18.0",
-    "@typescript-eslint/parser": "^6.18.0",
-    "eslint": "^8.56.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-rxjs": "^5.0.3",
-    "jasmine-core": "~5.1.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "minimatch": "^9.0.4",
-    "ng-packagr": "^17.0.0",
-    "prettier": "^3.2.5",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "~5.2.2"
-  },
-  "msw": {
-    "workerDirectory": [
-      "src"
-    ]
-  },
-  "ic": {
-    "default": "allow",
-    "ignore": ["*.spec.ts"],
-    "element": [
-      {
-        "type": "project",
-        "pattern": "projects/project/**/*"
-      },
-      {
-        "type": "app",
-        "pattern": "src/app/**/*"
-      }
+    "name": "eslint-plugin-ic",
+    "version": "0.0.1",
+    "description": "Custom ESLint rules for IC",
+    "main": "eslint-plugin-ic.js",
+    "scripts": {
+      "build": "node_modules/.bin/bun build eslint-plugin-ic.js --outdir ./dist --target node"
+    },
+    "keywords": [
+        "eslint",
+        "eslintplugin"
     ],
-    "rules": [
-      {
-        "from": "app",
-        "allow": [
-          "project",
-          "app"
-        ]
-      },
-      {
-        "from": "project",
-        "allow": [
-          "project",
-          "app"
-        ]
-      }
-    ]
-  }
+    "peerDependencies": {
+        "eslint": ">=8.56",
+        "minimatch": ">=9.0.4",
+        "tsconfig-paths": ">=4.2.0",
+        "typescript": ">=4.0",
+        "typescript-eslint-parser": ">=6.18"
+    },
+    "author": "derek",
+    "license": "MIT",
+    "dependencies": {
+        "bun": "^1.1.4"
+    }
 }
